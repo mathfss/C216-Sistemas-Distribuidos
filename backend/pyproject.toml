@@ -2,7 +2,7 @@
 name = "backend"
 version = "0.1.0"
 description = "Backend para Práticas de Sistemas Distribuídos (C216)"
-authors = ["Matheus <matheus@example.com>"]
+authors = ["Matheus <matheus.augusto@ges.inatel.br>"]
 readme = "README.md"
 package-mode = false
 
