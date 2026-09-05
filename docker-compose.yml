@@ -1,7 +1,4 @@
 services:
-  # ----------------------------------------------------------------------------
-  # Serviço da Aplicação Backend (FastAPI + Poetry)
-  # ----------------------------------------------------------------------------
   backend:
     build:
       context: ./backend
@@ -23,9 +20,6 @@ services:
     networks:
       - c216_network
 
-  # ----------------------------------------------------------------------------
-  # Serviço do Banco de Dados Relacional (PostgreSQL 16 Alpine)
-  # ----------------------------------------------------------------------------
   db:
     image: postgres:16-alpine
     container_name: c216_db
@@ -47,17 +41,9 @@ services:
     networks:
       - c216_network
 
-# ------------------------------------------------------------------------------
-# Volumes persistentes
-# ------------------------------------------------------------------------------
 volumes:
   postgres_data:
-    name: c216_postgres_data
 
-# ------------------------------------------------------------------------------
-# Redes personalizadas para comunicação distribuída
-# ------------------------------------------------------------------------------
 networks:
   c216_network:
-    name: c216_network
     driver: bridge
