@@ -1,26 +1,41 @@
 # Backend - C216 (Sistemas Distribuídos)
 
-Este diretório contém o backend desenvolvido em Python com FastAPI, gerenciado via Poetry e conteinerizado com Docker.
+Backend em Python com FastAPI, gerenciado via Poetry, conteinerizado com Docker e com pipeline de Integração Contínua (CI) via GitHub Actions.
 
-## Dependências Principais
-- **FastAPI**: Framework web moderno e de alta performance.
-- **Uvicorn**: Servidor ASGI para execução da aplicação.
-- **Pydantic**: Validação de dados e tipagem estrita.
-- **Pytest & HTTPX**: Testes automatizados da API.
+## Estrutura de Diretórios
+- `main.py`: Aplicação FastAPI e rotas da API.
+- `tests/`: Suíte de testes automatizados com Pytest.
+  - `conftest.py`: Fixtures de teste reutilizáveis (`client`, `sample_item_payload`, `reset_database`).
+  - `test_api.py`: Testes unitários cobrindo rotas, validações, casos de erro e parametrização.
+- `Dockerfile` e `.dockerignore`: Definições para criação da imagem do container.
+- `pyproject.toml` e `poetry.lock`: Gerenciamento de dependências.
 
-## Conteinerização
-- **Dockerfile**: Imagem baseada em `python:3.11-slim`, com instalação do Poetry e cache inteligente de camadas.
-- **.dockerignore**: Exclusão de arquivos temporários, caches e ambientes virtuais locais.
+## Como Executar os Testes
 
-## Como Executar
+### 1. Pelo Makefile (na raiz do projeto)
+```bash
+make test
+```
 
-### 1. Via Docker Compose (Ambiente Distribuído Completo)
-Na raiz do projeto:
-- `make compose-up`: Constrói as imagens e sobe os serviços do backend e banco de dados PostgreSQL.
-- `make compose-logs`: Visualiza os logs dos containers em tempo real.
-- `make compose-down`: Encerra e remove os containers.
+### 2. Diretamente com o Poetry (dentro da pasta `backend`)
+```bash
+cd backend
+poetry run pytest tests/ -v
+```
 
-### 2. Desenvolvimento Local (Direto no Host)
-- `make install`: Instala as dependências via Poetry.
-- `make run`: Inicia o servidor localmente com recarregamento automático (reload).
-- `make test`: Executa a suíte de testes unitários com Pytest.
+### 3. Execução em CI (GitHub Actions)
+Os testes são executados automaticamente a cada `push` e `pull_request` no GitHub através do workflow definido em `.github/workflows/ci-backend.yml`.
+
+## Como Executar a Aplicação
+
+### Via Docker Compose (Ambiente Completo)
+Na raiz do repositório:
+```bash
+make compose-up
+```
+
+### Desenvolvimento Local (Host)
+```bash
+make install
+make run
+```

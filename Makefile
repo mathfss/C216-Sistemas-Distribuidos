@@ -21,7 +21,7 @@ help:
 	@echo "Comandos disponiveis:"
 	@echo "  make install         - Instala dependencias com poetry"
 	@echo "  make run             - Roda o backend localmente"
-	@echo "  make test            - Roda os testes com pytest"
+	@echo "  make test            - Roda a suite de testes com pytest"
 	@echo "  make lock            - Atualiza o poetry.lock"
 	@echo "  make clean           - Limpa arquivos de cache"
 	@echo "  make docker-build    - Build da imagem docker do backend"
@@ -40,7 +40,7 @@ run:
 	cd $(BACKEND_DIR) && $(POETRY) run uvicorn main:app --host $(HOST) --port $(PORT) --reload
 
 test:
-	cd $(BACKEND_DIR) && $(POETRY) run pytest -v
+	cd $(BACKEND_DIR) && $(POETRY) run pytest tests/ -v
 
 lock:
 	cd $(BACKEND_DIR) && $(POETRY) lock
