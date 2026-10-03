@@ -1,16 +1,17 @@
 import pytest
 from fastapi.testclient import TestClient
-from main import app, fake_db
+from main import app
+from services import item_service
 
 @pytest.fixture
 def client():
-    """Fixture que fornece um cliente de testes da aplicacao."""
+    """Fornece o TestClient para os testes de integracao."""
     with TestClient(app) as test_client:
         yield test_client
 
 @pytest.fixture
 def sample_item_payload():
-    """Fixture com dados padrao para criacao de item."""
+    """Payload padrao para criacao de item."""
     return {
         "name": "Cluster Worker",
         "description": "No de computacao distribuida",
@@ -19,12 +20,6 @@ def sample_item_payload():
 
 @pytest.fixture(autouse=True)
 def reset_database():
-    """Fixture automatica para garantir o estado inicial dos dados antes de cada teste."""
-    initial_state = {
-        1: {"id": 1, "name": "Servidor Node A", "description": "No do cluster distribuido", "price": 1500.0},
-        2: {"id": 2, "name": "Servidor Node B", "description": "No de processamento", "price": 2200.0},
-        3: {"id": 3, "name": "Load Balancer", "description": "Distribuidor de carga", "price": 800.0},
-    }
-    fake_db.clear()
-    fake_db.update(initial_state)
+    """Garante que a base em memoria seja resetada antes de cada teste."""
+    item_service.reset_db()
     yield
