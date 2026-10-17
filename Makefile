@@ -11,7 +11,7 @@ COMPOSE_FILE      := docker-compose.yml
 DB_CONTAINER      := c216_db
 BACKEND_CONTAINER := c216_backend
 
-.PHONY: help install run test lock clean \
+.PHONY: help install run test test-unit test-integration lock clean \
         docker-build compose-up compose-down compose-logs \
         compose-ps compose-restart backend-shell db-shell
 
@@ -19,19 +19,21 @@ BACKEND_CONTAINER := c216_backend
 
 help:
 	@echo "Comandos disponiveis:"
-	@echo "  make install         - Instala dependencias com poetry"
-	@echo "  make run             - Roda o backend localmente"
-	@echo "  make test            - Roda a suite de testes com pytest"
-	@echo "  make lock            - Atualiza o poetry.lock"
-	@echo "  make clean           - Limpa arquivos de cache"
-	@echo "  make docker-build    - Build da imagem docker do backend"
-	@echo "  make compose-up      - Sobe os containers (backend e banco)"
-	@echo "  make compose-down    - Para os containers"
-	@echo "  make compose-logs    - Mostra os logs dos containers"
-	@echo "  make compose-ps      - Status dos containers"
-	@echo "  make compose-restart - Reinicia os containers"
-	@echo "  make backend-shell   - Abre terminal no container do backend"
-	@echo "  make db-shell        - Entra no psql do postgres"
+	@echo "  make install          - Instala dependencias com poetry"
+	@echo "  make run              - Roda o backend localmente"
+	@echo "  make test             - Roda todos os testes (unitarios + integracao)"
+	@echo "  make test-unit        - Roda apenas os testes unitarios"
+	@echo "  make test-integration - Roda apenas os testes de integracao"
+	@echo "  make lock             - Atualiza o poetry.lock"
+	@echo "  make clean            - Limpa arquivos de cache"
+	@echo "  make docker-build     - Build da imagem docker do backend"
+	@echo "  make compose-up       - Sobe os containers (backend e banco)"
+	@echo "  make compose-down     - Para os containers"
+	@echo "  make compose-logs     - Mostra os logs dos containers"
+	@echo "  make compose-ps       - Status dos containers"
+	@echo "  make compose-restart  - Reinicia os containers"
+	@echo "  make backend-shell    - Abre terminal no container do backend"
+	@echo "  make db-shell         - Entra no psql do postgres"
 
 install:
 	cd $(BACKEND_DIR) && $(POETRY) install
@@ -41,6 +43,12 @@ run:
 
 test:
 	cd $(BACKEND_DIR) && $(POETRY) run pytest tests/ -v
+
+test-unit:
+	cd $(BACKEND_DIR) && $(POETRY) run pytest tests/unit/ -v
+
+test-integration:
+	cd $(BACKEND_DIR) && $(POETRY) run pytest tests/integration/ -v
 
 lock:
 	cd $(BACKEND_DIR) && $(POETRY) lock
