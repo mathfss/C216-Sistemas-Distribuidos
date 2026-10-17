@@ -1,22 +1,40 @@
 # Backend - C216 (Sistemas Distribuídos)
 
-Backend em Python com FastAPI com arquitetura modular, gerenciado via Poetry, conteinerizado com Docker e com pipeline de Integração Contínua (CI) via GitHub Actions.
+Backend em Python com FastAPI integrado a persistência relacional com PostgreSQL, SQLAlchemy ORM e migrations com Alembic, organizado em arquitetura em camadas.
 
 ## Arquitetura do Projeto
-- `main.py`: Ponto de entrada da aplicação, responsável exclusivamente pela inicialização do FastAPI e inclusão dos roteadores.
-- `schemas/`: Modelos de dados e validações com Pydantic (`item.py`).
-- `services/`: Regras de negócio e camada de manipulação de dados (`item_service.py`).
-- `routers/`: Controladores e endpoints da API organizados por contexto:
-  - `items.py`: Rotas do recurso com suporte completo a GET, POST, PUT, PATCH e DELETE, com uso de Path e Query Parameters.
-  - `system.py`: Rotas de status do sistema (`/`, `/health`, `/db-status`).
-- `tests/`: Separação explícita da suíte de testes:
-  - `unit/`: Testes unitários focados nas regras de negócio da camada de serviço.
-  - `integration/`: Testes de integração via `TestClient` cobrindo todos os endpoints HTTP, parâmetros e validações.
-  - `conftest.py`: Fixtures compartilhadas do Pytest.
+- `app/`: Pacote principal da aplicação.
+  - `main.py`: Inicialização do FastAPI e inclusão das rotas.
+  - `api/routes/`: Controladores e endpoints da API (`items.py`, `system.py`).
+  - `schemas/`: Schemas Pydantic para validação de entrada e saída da API (`item.py`).
+  - `services/`: Regras de negócio intermediando rotas e repositórios (`item_service.py`).
+  - `repositories/`: Camada de persistência e acesso a dados via SQLAlchemy (`item_repository.py`).
+  - `models/`: Modelos ORM mapeados para tabelas do PostgreSQL (`item.py`).
+  - `database/`: Configuração da engine, sessões (`session.py`) e classe declarativa `Base` (`base.py`).
+  - `core/`: Configurações centralizadas e leitura de variáveis de ambiente (`config.py`).
+- `alembic/`: Gerenciamento e versionamento de migrations de banco de dados.
+- `tests/`: Suíte de testes automatizados com Pytest.
+  - `unit/`: Testes unitários das regras de negócio e camada de serviço.
+  - `integration/`: Testes de integração dos endpoints via TestClient.
+  - `conftest.py`: Fixtures de banco de teste e cliente HTTP.
+
+## Como Executar as Migrations
+
+- Aplicar migrations pendentes:
+  ```bash
+  make db-upgrade
+  ```
+- Gerar nova migration baseada nos modelos:
+  ```bash
+  make db-migration msg="descricao_da_mudanca"
+  ```
+- Verificar a revisão atual do banco:
+  ```bash
+  make db-current
+  ```
 
 ## Como Executar os Testes
 
-### 1. Pelo Makefile (na raiz do projeto)
 - Todos os testes (unitários + integração):
   ```bash
   make test
@@ -30,24 +48,25 @@ Backend em Python com FastAPI com arquitetura modular, gerenciado via Poetry, co
   make test-integration
   ```
 
-### 2. Diretamente com o Poetry (dentro de `backend`)
-```bash
-cd backend
-poetry run pytest tests/ -v
-```
+## Lint e Formatação
 
-### 3. Execução em CI (GitHub Actions)
-Os testes são executados automaticamente a cada `push` e `pull_request` no GitHub através do workflow `.github/workflows/ci-backend.yml`.
+- Verificar código com linter:
+  ```bash
+  make lint
+  ```
+- Formatar código automaticamente:
+  ```bash
+  make format
+  ```
 
 ## Como Executar a Aplicação
 
-### Via Docker Compose
-```bash
-make compose-up
-```
-
-### Desenvolvimento Local (Host)
-```bash
-make install
-make run
-```
+- Via Docker Compose (API + PostgreSQL):
+  ```bash
+  make compose-up
+  ```
+- Desenvolvimento local:
+  ```bash
+  make install
+  make run
+  ```

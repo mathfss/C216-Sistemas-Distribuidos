@@ -3,12 +3,14 @@ def test_root_endpoint(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert "Prática 4" in data["pratica"]
+    assert "Prática 5" in data["pratica"]
+
 
 def test_health_check(client):
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
+
 
 def test_db_status_endpoint(client):
     response = client.get("/db-status")
