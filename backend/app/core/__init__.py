@@ -1,0 +1,1 @@
+# Modulo de configuracoes centrais
