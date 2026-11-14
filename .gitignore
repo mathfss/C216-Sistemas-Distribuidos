@@ -28,5 +28,13 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Environment variables
+.env
+*.env
+!.env.example
+
 # Arquivos temporarios de instrucao
 README_labels.md
+postgresql-sqlalchemy-migrations.md
+frontend_js_react_tailwind.md
+integracao-fullstack.md
