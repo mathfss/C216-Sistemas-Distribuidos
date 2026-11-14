@@ -64,6 +64,22 @@ def test_create_item_success(client, sample_item_payload):
     assert data["price"] == sample_item_payload["price"]
 
 
+def test_create_item_without_price_and_trailing_slash(client):
+    payload = {"name": "Dispositivo IoT", "description": "Sem preco explicito"}
+    response = client.post("/items/", json=payload)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "Dispositivo IoT"
+    assert data["price"] == 0.0
+
+
+def test_create_item_duplicate_name(client):
+    payload = {"name": "Servidor Node A", "description": "Duplicado"}
+    response = client.post("/items/", json=payload)
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Já existe um item com esse nome"
+
+
 def test_create_item_validation_error(client):
     payload = {"name": "", "price": -50.0}
     response = client.post("/items", json=payload)

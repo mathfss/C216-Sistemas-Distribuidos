@@ -3,7 +3,7 @@ import os
 
 class Settings:
     PROJECT_NAME: str = "C216 - Sistemas Distribuídos"
-    VERSION: str = "5.0.0"
+    VERSION: str = "7.0.0"
 
     # Configuracoes de Banco de Dados
     DB_USER: str = os.getenv("DB_USER", "postgres")
@@ -22,6 +22,14 @@ class Settings:
         if url.startswith("postgresql://"):
             url = url.replace("postgresql://", "postgresql+psycopg://", 1)
         return url
+
+    @property
+    def CORS_ORIGINS(self) -> list[str]:
+        raw = os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174",
+        )
+        return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
 settings = Settings()

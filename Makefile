@@ -9,7 +9,7 @@ PORT              := 8000
 DOCKER            := docker
 DOCKER_COMPOSE    := docker compose
 IMAGE_NAME        := c216-backend
-COMPOSE_FILE      := docker-compose.yml
+COMPOSE_FILE      := compose.yml
 DB_CONTAINER      := c216_db
 BACKEND_CONTAINER := c216_backend
 
@@ -17,7 +17,7 @@ BACKEND_CONTAINER := c216_backend
         lint format db-upgrade db-migration db-current \
         frontend-install frontend-dev frontend-lint frontend-format \
         frontend-check frontend-test frontend-test-e2e frontend-build \
-        check-all \
+        check-all e2e \
         docker-build compose-up compose-down compose-logs \
         compose-ps compose-restart up-build logs-api backend-shell db-shell
 
@@ -43,7 +43,8 @@ help:
 	@echo "  make frontend-test      - Executa os testes do frontend com Vitest"
 	@echo "  make frontend-test-e2e  - Executa os testes E2E com Playwright"
 	@echo "  make frontend-build     - Gera o build de producao do frontend"
-	@echo "  make check-all          - Executa todas as verificacoes (backend + frontend)"
+	@echo "  make e2e                - Executa E2E full-stack em stack isolada Docker (lab-e2e)"
+	@echo "  make check-all          - Executa todas as verificacoes (backend + frontend + e2e)"
 	@echo "  make lock               - Atualiza o poetry.lock"
 	@echo "  make clean              - Limpa arquivos de cache"
 	@echo "  make docker-build       - Build da imagem docker do backend"
@@ -111,7 +112,14 @@ frontend-test-e2e:
 frontend-build:
 	$(NPM) --prefix $(FRONTEND_DIR) run build
 
-check-all: lint test frontend-check frontend-test frontend-build frontend-test-e2e
+e2e:
+	API_PORT=8001 FRONTEND_PORT=5174 VITE_API_URL=http://localhost:8001 CORS_ORIGINS=http://localhost:5174,http://127.0.0.1:5174 $(DOCKER_COMPOSE) -p lab-e2e -f $(COMPOSE_FILE) up -d --build --wait
+	E2E_BASE_URL=http://localhost:5174 $(NPM) --prefix $(FRONTEND_DIR) run test:e2e; \
+	STATUS=$$?; \
+	$(DOCKER_COMPOSE) -p lab-e2e -f $(COMPOSE_FILE) down -v; \
+	exit $$STATUS
+
+check-all: lint test frontend-check frontend-test frontend-build e2e
 
 lock:
 	cd $(BACKEND_DIR) && $(POETRY) lock
@@ -144,7 +152,7 @@ compose-restart:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) restart
 
 backend-shell:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec $(BACKEND_CONTAINER) sh
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec api sh
 
 db-shell:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec $(DB_CONTAINER) psql -U postgres -d c216_db
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) exec db psql -U postgres -d c216_db

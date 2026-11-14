@@ -1,3 +1,6 @@
+import pytest
+from fastapi import HTTPException
+
 from app.schemas.item import ItemCreate, ItemPatch, ItemUpdate
 from app.services.item_service import ItemService
 
@@ -41,6 +44,15 @@ def test_create_item(db_session):
     created = service.create_item(payload)
     assert created.id == 4
     assert created.name == "Gateway API"
+
+
+def test_create_item_duplicate_name(db_session):
+    service = ItemService(db_session)
+    payload = ItemCreate(name="Servidor Node A", description="Outro", price=100.0)
+    with pytest.raises(HTTPException) as exc_info:
+        service.create_item(payload)
+    assert exc_info.value.status_code == 409
+    assert exc_info.value.detail == "Já existe um item com esse nome"
 
 
 def test_update_item_success(db_session):

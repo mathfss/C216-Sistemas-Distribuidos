@@ -30,6 +30,10 @@ class ItemRepository:
     def get_by_id(self, item_id: int) -> Item | None:
         return self.db.get(Item, item_id)
 
+    def get_by_name(self, name: str) -> Item | None:
+        query = select(Item).where(Item.name == name)
+        return self.db.scalars(query).first()
+
     def create(self, item_in: ItemCreate) -> Item:
         db_item = Item(
             name=item_in.name,

@@ -10,6 +10,7 @@ router = APIRouter(prefix="/items", tags=["Itens"])
 
 # 1. GET (com Query Parameters)
 @router.get("", response_model=list[ItemResponse])
+@router.get("/", response_model=list[ItemResponse], include_in_schema=False)
 def list_items(
     search: str | None = Query(None, description="Filtrar por nome ou descricao"),
     min_price: float | None = Query(None, ge=0, description="Filtrar por preco minimo"),
@@ -39,6 +40,9 @@ def get_item(
 
 # 3. POST (criacao de novo recurso)
 @router.post("", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=ItemResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False
+)
 def create_item(
     item_data: ItemCreate,
     db: Session = Depends(get_db),

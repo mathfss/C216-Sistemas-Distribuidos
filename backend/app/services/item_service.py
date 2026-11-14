@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.item import Item
@@ -22,6 +23,12 @@ class ItemService:
         return self.repo.get_by_id(item_id)
 
     def create_item(self, item_in: ItemCreate) -> Item:
+        existing = self.repo.get_by_name(item_in.name)
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Já existe um item com esse nome",
+            )
         return self.repo.create(item_in)
 
     def update_item(self, item_id: int, item_in: ItemUpdate) -> Item | None:
