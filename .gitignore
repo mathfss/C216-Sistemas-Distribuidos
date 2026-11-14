@@ -30,3 +30,5 @@ Thumbs.db
 
 # Arquivos temporarios de instrucao
 README_labels.md
+postgresql-sqlalchemy-migrations.md
+frontend_js_react_tailwind.md
