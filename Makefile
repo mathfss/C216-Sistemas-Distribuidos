@@ -114,6 +114,7 @@ frontend-build:
 
 e2e:
 	API_PORT=8001 FRONTEND_PORT=5174 VITE_API_URL=http://localhost:8001 CORS_ORIGINS=http://localhost:5174,http://127.0.0.1:5174 $(DOCKER_COMPOSE) -p lab-e2e -f $(COMPOSE_FILE) up -d --build --wait
+	@for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do curl -sf http://localhost:5174 > /dev/null 2>&1 && break || sleep 1; done
 	E2E_BASE_URL=http://localhost:5174 $(NPM) --prefix $(FRONTEND_DIR) run test:e2e; \
 	STATUS=$$?; \
 	$(DOCKER_COMPOSE) -p lab-e2e -f $(COMPOSE_FILE) down -v; \

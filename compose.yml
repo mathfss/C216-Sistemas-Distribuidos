@@ -55,12 +55,7 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5173/ || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
 
 volumes:
   postgres_data:
+

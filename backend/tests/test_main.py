@@ -14,3 +14,4 @@ def test_cors_unallowed_origin(client):
     )
     assert response.status_code == 200
     assert "access-control-allow-origin" not in response.headers
+
